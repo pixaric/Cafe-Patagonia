@@ -320,9 +320,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const tableNumber = tableNumberInput.value;
         const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-        let message = `*¡Nuevo Pedido!* 🎉\n\n`;
-        message += `*Mesa:* ${tableNumber}\n`;
-        message += `------------------------------\n`;
+        let message = `*¡Nuevo Pedido!* ℹ️🍽️\n`;
+        message += `*MESA:* ${tableNumber}\n`;
+        message += `------------------------------\n\n`;
+        
 
         cart.forEach(item => {
             message += `*${item.quantity}x* ${item.name} - €${(item.price * item.quantity).toFixed(2)}\n`;
@@ -377,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const phoneNumber = '34684792506'; // Without '+' or spaces
         const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
         
-        playSound('order_placed.mp3');
+        playSound('happy-pop.mp3');
         window.open(whatsappUrl, '_blank');
         
         // Show confirmation modal with the order that was just sent
