@@ -1,9 +1,6 @@
 
 import { generarQR } from './qr.js';
-
-const finalizarPedidoBtn = document.getElementById('finalizarPedidoBtn');
-finalizarPedidoBtn.addEventListener('click', generarQR);
-
+document.getElementById('finalizarPedidoBtn').addEventListener('click', generarQR);
 
 
 
@@ -113,3 +110,38 @@ document.body.insertAdjacentHTML('beforeend', '<p style="color:red;">App cargada
 console.log('Elemento totalPriceEl:', document.getElementById('total-price'));
 
 
+document.getElementById('finalizarPedidoBtn').addEventListener('click', () => {
+  const canvas = document.getElementById('qrcode');
+  const ticketContent = document.getElementById('ticket-content');
+  const qrContainer = document.getElementById('qrContainer');
+  const mesa = document.getElementById('table-number').value || 'Sin número';
+
+  // Simulación de productos en el carrito
+  const cart = [
+    { name: 'Café', quantity: 2 },
+    { name: 'Croissant', quantity: 1 }
+  ];
+
+  if (cart.length === 0) {
+    ticketContent.textContent = '❌ El carrito está vacío.';
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+    return;
+  }
+
+  const pedidoTexto = cart.map(item => `• ${item.quantity}x ${item.name}`).join('\n');
+  const textoVisible = `Mesa: ${mesa}\n\nPedido:\n${pedidoTexto}`;
+  ticketContent.textContent = textoVisible;
+
+  const pedidoId = `PED-${Date.now()}`;
+  const pedidoData = { mesa, pedido: cart };
+  localStorage.setItem(pedidoId, JSON.stringify(pedidoData));
+
+  new QRious({
+    element: canvas,
+    value: pedidoId,
+    size: 256,
+    level: 'L'
+  });
+
+  qrContainer.style.display = 'block';
+});
