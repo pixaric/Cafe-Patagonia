@@ -34,6 +34,7 @@
     function procesarQR(contenido) {
       try {
         const datos = JSON.parse(contenido);
+        if (!datos.mesa || !Array.isArray(datos.pedido)) throw new Error();
         pedidoData = datos;
         mostrarPedido(datos);
       } catch (e) {
@@ -52,14 +53,12 @@
         { facingMode: "environment" },
         { fps: 10, qrbox: 250 },
         (decodedText) => {
-          html5QrCode.stop(); // detener escaneo tras lectura
+          html5QrCode.stop();
           escaneoActivo = false;
           document.getElementById('reader').style.display = 'none';
           procesarQR(decodedText);
         },
-        (errorMessage) => {
-          // ignorar errores de escaneo
-        }
+        (errorMessage) => {}
       );
     });
 

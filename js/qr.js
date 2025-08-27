@@ -19,11 +19,17 @@ export function generarQR() {
   const mesa = tableNumberInput.value || 'Sin número';
   const pedidoId = `PED-${Date.now()}`;
   const pedidoData = {
-    mesa,
-    pedido: cart.map(item => ({
-      name: item.name,
-      quantity: item.quantity
-    }))
+  mesa,
+  pedido: cart.map(item => ({
+    name: item.name,
+    quantity: item.quantity
+  }))
+};
+
+const textoQR = JSON.stringify(pedidoData); // 👈 esto es lo que se codifica
+
+qr.makeCode(textoQR);
+
   };
 
   // Simulación: guardar en localStorage
