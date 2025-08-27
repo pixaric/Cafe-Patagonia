@@ -5,19 +5,93 @@
   <title>Escanear pedido</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    #reader { width: 300px; margin-bottom: 20px; display: none; }
-    pre { background: #f4f4f4; padding: 10px; white-space: pre-wrap; }
-    button { margin: 10px 10px 10px 0; padding: 10px 20px; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f9f9f9;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    #escanearBtn {
+      background-color: #0078D4;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    #reader {
+      width: 320px;
+      margin-bottom: 30px;
+      display: none;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      background: white;
+    }
+
+    #pedido {
+      width: 100%;
+      max-width: 500px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+      white-space: pre-wrap;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .acciones {
+      display: flex;
+      gap: 15px;
+    }
+
+    .acciones button {
+      padding: 10px 20px;
+      font-size: 15px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+
+    #guardarBtn {
+      background-color: #28a745;
+      color: white;
+    }
+
+    #imprimirBtn {
+      background-color: #ffc107;
+      color: black;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
   <h2>Escanear pedido</h2>
-  <button id="escanearBtn">Escanear</button>
+  <button id="escanearBtn">📷 Escanear</button>
   <div id="reader"></div>
+
   <pre id="pedido">Esperando escaneo...</pre>
-  <button id="guardarBtn" disabled>Guardar en BD</button>
-  <button id="imprimirBtn" disabled>Imprimir</button>
+
+  <div class="acciones">
+    <button id="guardarBtn" disabled>💾 Guardar en BD</button>
+    <button id="imprimirBtn" disabled>🖨️ Imprimir</button>
+  </div>
 
   <script>
     let pedidoData = null;
@@ -38,7 +112,7 @@
         pedidoData = datos;
         mostrarPedido(datos);
       } catch (e) {
-        document.getElementById('pedido').textContent = 'QR inválido o no contiene un pedido válido.';
+        document.getElementById('pedido').textContent = '❌ QR inválido o no contiene un pedido válido.';
       }
     }
 
@@ -64,7 +138,7 @@
 
     document.getElementById('guardarBtn').addEventListener('click', () => {
       console.log('Guardando en BD:', pedidoData);
-      alert('Pedido guardado correctamente (simulado)');
+      alert('✅ Pedido guardado correctamente (simulado)');
     });
 
     document.getElementById('imprimirBtn').addEventListener('click', () => {
