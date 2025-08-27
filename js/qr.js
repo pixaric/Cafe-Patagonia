@@ -2,6 +2,8 @@ import { cart } from './cart.js';
 import { tableNumberInput } from './dom.js';
 
 export function generarQR() {
+  console.log('Generando QR...');
+
   const qrDiv = document.getElementById('qrcode');
   const qrContainer = document.getElementById('qrContainer');
   const ticketContent = document.getElementById('ticket-content');
@@ -17,36 +19,22 @@ export function generarQR() {
   }
 
   const mesa = tableNumberInput.value || 'Sin número';
-  const pedidoId = `PED-${Date.now()}`;
-  const pedidoData = {
-  mesa,
-  pedido: cart.map(item => ({
-    name: item.name,
-    quantity: item.quantity
-  }))
-};
 
-const textoQR = JSON.stringify(pedidoData); // 👈 esto es lo que se codifica
+  // ✅ Mostrar el pedido completo en texto
+  const pedidoTexto = cart.map(item => {
+    return `• ${item.quantity}x ${item.name}`;
+  }).join('\n');
 
-qr.makeCode(textoQR);
-
-  };
-
-  // Simulación: guardar en localStorage
-  localStorage.setItem(pedidoId, JSON.stringify(pedidoData));
-
-  // Mostrar el pedido en texto
-  const textoVisible = `Mesa: ${mesa}\n\nPedido:\n` +
-    pedidoData.pedido.map(item => `• ${item.quantity}x ${item.name}`).join('\n');
+  const textoVisible = `Mesa: ${mesa}\n\nPedido:\n${pedidoTexto}`;
   ticketContent.textContent = textoVisible;
 
-  // Generar QR con enlace único
-  const enlaceQR = `https://tusitio.com/pedido.html?id=${pedidoId}`;
+  // ✅ Generar QR con un identificador compacto
+  const pedidoId = `PED-${Date.now()}`;
   const qr = new QRCode(qrDiv, {
     width: 256,
     height: 256,
     correctLevel: QRCode.CorrectLevel.L
   });
 
-  qr.makeCode(enlaceQR);
+  qr.makeCode(pedidoId);
 }
