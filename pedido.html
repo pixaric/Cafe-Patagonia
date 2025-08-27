@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Escanear pedido</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    #reader { width: 300px; margin-bottom: 20px; display: none; }
+    pre { background: #f4f4f4; padding: 10px; white-space: pre-wrap; }
+    button { margin: 10px 10px 10px 0; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h2>Escanear pedido</h2>
+  <button id="escanearBtn">Escanear</button>
+  <div id="reader"></div>
+  <pre id="pedido">Esperando escaneo...</pre>
+  <button id="guardarBtn" disabled>Guardar en BD</button>
+  <button id="imprimirBtn" disabled>Imprimir</button>
+
+  <script>
+    let pedidoData = null;
+    let escaneoActivo = false;
+
+    function mostrarPedido(datos) {
+      const texto = `Mesa: ${datos.mesa}\n\nPedido:\n` +
+        datos.pedido.map(item => `• ${item.quantity}x ${item.name}`).join('\n');
+      document.getElementById('pedido').textContent = texto;
+      document.getElementById('guardarBtn').disabled = false;
+      document.getElementById('imprimirBtn').disabled = false;
+    }
+
+    function procesarQR(contenido) {
+      try {
+        const datos = JSON.parse(contenido);
+        pedidoData = datos;
+        mostrarPedido(datos);
+      } catch (e) {
+        document.getElementById('pedido').textContent = 'QR inválido o no contiene un pedido válido.';
+      }
+    }
+
+    document.getElementById('escanearBtn').addEventListener('click', () => {
+      if (escaneoActivo) return;
+
+      escaneoActivo = true;
+      document.getElementById('reader').style.display = 'block';
+
+      const html5QrCode = new Html5Qrcode("reader");
+      html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        (decodedText) => {
+          html5QrCode.stop(); // detener escaneo tras lectura
+          escaneoActivo = false;
+          document.getElementById('reader').style.display = 'none';
+          procesarQR(decodedText);
+        },
+        (errorMessage) => {
+          // ignorar errores de escaneo
+        }
+      );
+    });
+
+    document.getElementById('guardarBtn').addEventListener('click', () => {
+      console.log('Guardando en BD:', pedidoData);
+      alert('Pedido guardado correctamente (simulado)');
+    });
+
+    document.getElementById('imprimirBtn').addEventListener('click', () => {
+      window.print();
+    });
+  </script>
+</body>
+</html>

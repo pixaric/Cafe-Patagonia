@@ -22,41 +22,29 @@
                 </div>
             </section>
             <aside id="cart">
-              <h2>Tu Pedido</h2>
-              <div class="table-number-container">
-                <label for="table-number">Nº de Mesa:</label>
-                <input type="number" id="table-number" min="1" placeholder="Ej: 5" required>
-              </div>
-              <div id="cart-items">
-                <p class="empty-cart-message">Tu carrito está vacío.</p>
-              </div>
-              <div id="cart-summary">
-                <p>Total: <span id="total-price">€0.00</span></p>
-                <button id="place-order-btn" disabled>Enviar por WhatsApp</button>
-                
-              </div>
+                <h2>Tu Pedido</h2>
+                <div class="table-number-container">
+                    <label for="table-number">Nº de Mesa:</label>
+                    <input type="number" id="table-number" min="1" placeholder="Ej: 5" required>
+                </div>
+                <div id="cart-items">
+                    <p class="empty-cart-message">Tu carrito está vacío.</p>
+                </div>
+                <div id="cart-summary">
+                    <p>Total: <span id="total-price">€0.00</span></p>
+                    <button id="place-order-btn" disabled>Enviar por WhatsApp</button>
+                </div>
+                <div id="verQRContainer" style="margin-top: 20px;">
+  <button id="verQRBtn">🎟️ Ver QR</button>
+  <div id="qrcode" style="margin-top: 20px;"></div>
 
-             <!-- Botón para generar el QR -->
-<button id="finalizarPedidoBtn">Finalizar pedido</button>
+  <button onclick="mostrarBotonQR()">Finalizar pedido</button>
 
-<!-- Contenedor del QR -->
-<div id="qrContainer" style="display: none; margin-top: 20px;">
-  <h3>Tu pedido en QR:</h3>
-  <div id="qrcode"></div>
+
   <pre id="ticket-content"></pre>
 </div>
 
-<!-- Librería QRCode.js -->
-
-
-
-
-
-
-
-              
-            </aside>
-
+</div>
 
             </aside>
         </main>
@@ -67,11 +55,13 @@
             <button id="close-modal-btn">&times;</button>
             <h2>¡Pedido Recibido!</h2>
             <p>Muestra este código QR en el mostrador.</p>
-            <div id="modal-qrcode"></div>
-            <pre id="modal-ticket-content"></pre>
+            <div id="qrcode"></div>
+            <pre id="ticket-content"></pre>
             <button id="new-order-btn">Nuevo Pedido</button>
         </div>
-        
+        <div>
+
+</div>
 
     </div>
 
@@ -131,10 +121,19 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-<script type="module" src="js/main.js"></script>
 
 
+    <script src="js/dom.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/ticket.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/order.js"></script>
+<script src="js/events.js"></script>
+<script src="js/main.js"></script>
 
+<script src="generaqr.js"></script>
 
 
 

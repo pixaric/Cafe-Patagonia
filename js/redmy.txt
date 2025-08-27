@@ -1,0 +1,26 @@
+/js/
+│
+├── dom.js              // Referencias a elementos del DOM
+├── audio.js            // Inicialización y reproducción de sonidos
+├── menu.js             // Renderizado de menú y categorías
+├── cart.js             // Gestión del carrito y renderizado
+├── ticket.js           // Generación de ticket y mensaje de WhatsApp
+├── modal.js            // Modal de confirmación y QR
+├── order.js            // Envío del pedido y reinicio
+├── events.js           // Listeners de interacción
+├── main.js             // Inicialización general
+
+
+Cafe-Patagonia/
+├── index.html
+├── images/
+│   └── cafe.jpg
+├── js/
+│   ├── main.js
+│   ├── dom.js
+│   ├── menu.js
+│   ├── cart.js
+│   ├── ticket.js
+│   ├── modal.js
+│   ├── audio.js
+│   └── events.js
