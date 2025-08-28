@@ -93,61 +93,80 @@
     <button id="imprimirBtn" disabled>🖨️ Imprimir</button>
   </div>
 
-  <script>
-    let pedidoData = null;
-    let escaneoActivo = false;
+  <script type="importmap">
+{
+  "imports": {
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+    "firebase/database": "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"
+  }
+}
+</script>
+<script type="module">
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, push } from "firebase/database";
 
-    function mostrarPedido(datos) {
-      const texto = `Mesa: ${datos.mesa}\n\nPedido:\n` +
-        datos.pedido.map(item => `• ${item.quantity}x ${item.name}`).join('\n');
-      document.getElementById('pedido').textContent = texto;
-      document.getElementById('guardarBtn').disabled = false;
-      document.getElementById('imprimirBtn').disabled = false;
-    }
+const firebaseConfig = {
+  apiKey: "AIzaSyDFdTREJvegUdsOUc7A0-NTOvKemQmTGyI",
+  authDomain: "pedidosqr-34bea.firebaseapp.com",
+  databaseURL: "https://pedidosqr-34bea-default-rtdb.firebaseio.com",
+  projectId: "pedidosqr-34bea",
+  storageBucket: "pedidosqr-34bea.appspot.com",
+  messagingSenderId: "743534119824",
+  appId: "1:743534119824:web:17cf79d3b6952380084115"
+};
 
-    function procesarQR(contenido) {
-      try {
-        if (contenido.startsWith('PED-')) {
-          const datos = JSON.parse(localStorage.getItem(contenido));
-          if (!datos || !datos.mesa || !Array.isArray(datos.pedido)) throw new Error();
-          pedidoData = datos;
-          mostrarPedido(datos);
-        } else {
-          document.getElementById('pedido').textContent = '❌ QR inválido o no contiene un ID válido.';
-        }
-      } catch (e) {
-        document.getElementById('pedido').textContent = '❌ No se pudo recuperar el pedido.';
-      }
-    }
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-    document.getElementById('escanearBtn').addEventListener('click', () => {
-      if (escaneoActivo) return;
+let contenidoEscaneado = "";
+let escaneoActivo = false;
 
-      escaneoActivo = true;
-      document.getElementById('reader').style.display = 'block';
+const pedidoEl = document.getElementById("pedido");
+const guardarBtn = document.getElementById("guardarBtn");
+const imprimirBtn = document.getElementById("imprimirBtn");
 
-      const html5QrCode = new Html5Qrcode("reader");
-      html5QrCode.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
-        (decodedText) => {
-          html5QrCode.stop();
-          escaneoActivo = false;
-          document.getElementById('reader').style.display = 'none';
-          procesarQR(decodedText);
-        },
-        (errorMessage) => {}
-      );
-    });
+function procesarQR(texto) {
+  contenidoEscaneado = texto;
+  pedidoEl.textContent = texto;
+  guardarBtn.disabled = false;
+  imprimirBtn.disabled = false;
+}
 
-    document.getElementById('guardarBtn').addEventListener('click', () => {
-      console.log('Guardando en BD:', pedidoData);
-      alert('✅ Pedido guardado correctamente (simulado)');
-    });
+document.getElementById("escanearBtn").addEventListener("click", () => {
+  if (escaneoActivo) return;
 
-    document.getElementById('imprimirBtn').addEventListener('click', () => {
-      window.print();
-    });
-  </script>
+  escaneoActivo = true;
+  document.getElementById("reader").style.display = "block";
+
+  const html5QrCode = new Html5Qrcode("reader");
+  html5QrCode.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    (decodedText) => {
+      html5QrCode.stop();
+      escaneoActivo = false;
+      document.getElementById("reader").style.display = "none";
+      procesarQR(decodedText);
+    },
+    (errorMessage) => {}
+  );
+});
+
+guardarBtn.addEventListener("click", () => {
+  if (!contenidoEscaneado) return;
+
+  push(ref(db, "orders"), {
+    ticketText: contenidoEscaneado,
+    timestamp: Date.now()
+  });
+
+  guardarBtn.disabled = true;
+  guardarBtn.textContent = "✅ Guardado";
+});
+imprimirBtn.addEventListener("click", () => {
+  window.print();
+});
+</script>
+
 </body>
 </html>
