@@ -120,6 +120,9 @@ const db = getDatabase(app);
 
 let contenidoEscaneado = "";
 let escaneoActivo = false;
+let html5QrCode = null;
+
+
 
 const pedidoEl = document.getElementById("pedido");
 const guardarBtn = document.getElementById("guardarBtn");
@@ -138,19 +141,32 @@ document.getElementById("escanearBtn").addEventListener("click", () => {
   escaneoActivo = true;
   document.getElementById("reader").style.display = "block";
 
-  const html5QrCode = new Html5Qrcode("reader");
+  html5QrCode = new Html5Qrcode("reader");
+
   html5QrCode.start(
     { facingMode: "environment" },
     { fps: 10, qrbox: 250 },
     (decodedText) => {
-      html5QrCode.stop();
-      escaneoActivo = false;
-      document.getElementById("reader").style.display = "none";
-      procesarQR(decodedText);
+      setTimeout(() => {
+        if (html5QrCode) {
+          html5QrCode.stop().then(() => {
+            escaneoActivo = false;
+            document.getElementById("reader").style.display = "none";
+            procesarQR(decodedText);
+          }).catch(err => {
+            console.error("Error al detener el escaneo:", err);
+          });
+        }
+      }, 300);
     },
-    (errorMessage) => {}
+    (errorMessage) => {
+      console.warn("Error de escaneo:", errorMessage);
+    }
   );
 });
+
+
+
 
 guardarBtn.addEventListener("click", () => {
   if (!contenidoEscaneado) return;
@@ -177,18 +193,8 @@ setTimeout(() => {
 (errorMessage) => {
   escaneoActivo = false;
 }
-if (!contenidoEscaneado || contenidoEscaneado.length < 10) {
-  alert("❌ El contenido del QR es inválido o demasiado corto.");
-  return;
-}
 
-Html5Qrcode.getCameras().then(cameras => {
-  if (cameras.length > 0) {
-    alert("✅ Cámara detectada: " + cameras[0].label);
-  } else {
-    alert("❌ No se detectó ninguna cámara.");
-  }
-});
+
 
 </script>
 
