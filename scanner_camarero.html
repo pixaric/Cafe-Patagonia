@@ -182,6 +182,13 @@ if (!contenidoEscaneado || contenidoEscaneado.length < 10) {
   return;
 }
 
+Html5Qrcode.getCameras().then(cameras => {
+  if (cameras.length > 0) {
+    alert("✅ Cámara detectada: " + cameras[0].label);
+  } else {
+    alert("❌ No se detectó ninguna cámara.");
+  }
+});
 
 </script>
 
