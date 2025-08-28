@@ -83,6 +83,9 @@
 </head>
 <body>
   <h2>📷 Scanner Camarero</h2>
+  <label for="mesaInput">Número de mesa:</label>
+<input type="text" id="mesaInput" placeholder="Ej. 5" required style="margin-bottom: 20px; padding: 10px; font-size: 16px; border-radius: 6px; border: 1px solid #ccc; width: 200px;">
+
   <button id="escanearBtn">Escanear QR</button>
   <div id="reader"></div>
 <h3>🧾 Pedido Escaneado</h3>
@@ -136,34 +139,38 @@ function procesarQR(texto) {
 }
 
 document.getElementById("escanearBtn").addEventListener("click", () => {
+  const mesa = document.getElementById("mesaInput").value.trim();
+
+  if (!mesa) {
+    alert("❌ Debes ingresar el número de mesa antes de escanear.");
+    return;
+  }
+
   if (escaneoActivo) return;
 
   escaneoActivo = true;
   document.getElementById("reader").style.display = "block";
 
   html5QrCode = new Html5Qrcode("reader");
-
   html5QrCode.start(
     { facingMode: "environment" },
     { fps: 10, qrbox: 250 },
     (decodedText) => {
       setTimeout(() => {
-        if (html5QrCode) {
-          html5QrCode.stop().then(() => {
-            escaneoActivo = false;
-            document.getElementById("reader").style.display = "none";
-            procesarQR(decodedText);
-          }).catch(err => {
-            console.error("Error al detener el escaneo:", err);
-          });
-        }
+        html5QrCode.stop().then(() => {
+          escaneoActivo = false;
+          document.getElementById("reader").style.display = "none";
+
+          // Combinar mesa + ticket
+          const ticketFinal = `Mesa: ${mesa}\n\n${decodedText}`;
+          procesarQR(ticketFinal);
+        });
       }, 300);
     },
-    (errorMessage) => {
-      console.warn("Error de escaneo:", errorMessage);
-    }
+    (errorMessage) => {}
   );
 });
+
 
 
 
