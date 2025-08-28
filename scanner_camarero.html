@@ -152,24 +152,33 @@ document.getElementById("escanearBtn").addEventListener("click", () => {
   document.getElementById("reader").style.display = "block";
 
   html5QrCode = new Html5Qrcode("reader");
+
   html5QrCode.start(
     { facingMode: "environment" },
     { fps: 10, qrbox: 250 },
     (decodedText) => {
       setTimeout(() => {
-        html5QrCode.stop().then(() => {
-          escaneoActivo = false;
-          document.getElementById("reader").style.display = "none";
+        if (html5QrCode) {
+          html5QrCode.stop().then(() => {
+            escaneoActivo = false;
+            document.getElementById("reader").style.display = "none";
 
-          // Combinar mesa + ticket
-          const ticketFinal = `Mesa: ${mesa}\n\n${decodedText}`;
-          procesarQR(ticketFinal);
-        });
+            const ticketFinal = `Mesa: ${mesa}\n\n${decodedText}`;
+            procesarQR(ticketFinal);
+          }).catch(err => {
+            console.error("Error al detener el escaneo:", err);
+          });
+        }
       }, 300);
     },
-    (errorMessage) => {}
+    (errorMessage) => {
+      console.warn("Error de escaneo:", errorMessage);
+    }
   );
 });
+
+
+console.log("Mesa ingresada:", mesa);
 
 
 
