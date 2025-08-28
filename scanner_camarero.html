@@ -96,30 +96,25 @@
 
   </div>
 
-  <script type="importmap">
+ <script type="importmap">
 {
   "imports": {
     "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
-    "firebase/database": "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"
+    "firebase/database": "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js",
+    "./firebase-config.js": "./js/firebase-config.js"
   }
 }
 </script>
+
+</script>
 <script type="module">
-import { initializeApp } from "firebase/app";
-import { getDatabase, ref, push } from "firebase/database";
+import { ref, push } from "firebase/database";
+import { db } from "./firebase-config.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDFdTREJvegUdsOUc7A0-NTOvKemQmTGyI",
-  authDomain: "pedidosqr-34bea.firebaseapp.com",
-  databaseURL: "https://pedidosqr-34bea-default-rtdb.firebaseio.com",
-  projectId: "pedidosqr-34bea",
-  storageBucket: "pedidosqr-34bea.appspot.com",
-  messagingSenderId: "743534119824",
-  appId: "1:743534119824:web:17cf79d3b6952380084115"
-};
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+
+
+
 
 let contenidoEscaneado = "";
 let escaneoActivo = false;
@@ -176,14 +171,13 @@ document.getElementById("escanearBtn").addEventListener("click", () => {
 guardarBtn.addEventListener("click", () => {
   if (!contenidoEscaneado) return;
 
-  // Puedes estructurar el ticket si viene en formato plano
-  const ticket = {
+  const pedido = {
     ticketText: contenidoEscaneado,
     timestamp: Date.now(),
     estado: "pendiente"
   };
 
-  push(ref(db, "pedidos"), ticket)
+  push(ref(db, "pedidos"), pedido)
     .then(() => {
       guardarBtn.disabled = true;
       guardarBtn.textContent = "✅ Guardado";
@@ -194,6 +188,7 @@ guardarBtn.addEventListener("click", () => {
       alert("❌ No se pudo guardar el pedido");
     });
 });
+
 
 
 imprimirBtn.addEventListener("click", () => {
