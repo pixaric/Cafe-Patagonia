@@ -1,11 +1,6 @@
-
 import { generarQR } from './qr.js';
-document.getElementById('finalizarPedidoBtn').addEventListener('click', generarQR);
-
-
-
 import { renderMenu, renderCategories } from './menu.js';
-import { addToCart, updateQuantity, renderCart } from './cart.js';
+import { addToCart, updateQuantity, renderCart, cart } from './cart.js'; // asegúrate de exportar `cart`
 import { generateWhatsAppMessage, generateTicketText } from './ticket.js';
 import { initAudio, playSound } from './audio.js';
 import {
@@ -18,109 +13,59 @@ import {
   modalContainer
 } from './dom.js';
 import { showOrderModal, hideOrderModal, resetOrder } from './modal.js';
-
 import { menuData } from './data.js';
+
+
+
 console.log('Productos cargados:', menuData);
 
+
+
+
+
+
+// Inicializa la interfaz
+renderCategories();
 renderMenu();
+document.body.addEventListener('click', initAudio, { once: true });
 
 menuItemsContainer.addEventListener('click', e => {
   const btn = e.target.closest('.add-to-cart-btn');
   if (!btn) return;
-
   const itemId = parseInt(btn.dataset.id);
-  console.log('Botón clicado. ID del producto:', itemId);
   addToCart(itemId, 1);
 });
 
 cartItemsContainer.addEventListener('click', e => {
   const btn = e.target.closest('.quantity-btn');
   if (!btn) return;
-
   const itemId = parseInt(btn.dataset.id);
   const change = parseInt(btn.dataset.change);
-  updateQuantity(itemId, change); // ✅ ahora sí se usa
+  updateQuantity(itemId, change);
 });
 
-// Inicialización
-renderCategories();
-renderMenu();
-document.body.addEventListener('click', initAudio, { once: true });
-
-// Eventos básicos (puedes expandirlos luego)
 placeOrderBtn.addEventListener('click', () => {
   const ticket = generateTicketText();
   showOrderModal(ticket);
 });
 
-
-
-// Inicialización
-renderCategories();
-renderMenu();
-document.body.addEventListener('click', initAudio, { once: true });
-
-// Eventos
-menuItemsContainer.addEventListener('click', e => {
-  
-  // lógica de añadir al carrito
-});
-
-cartItemsContainer.addEventListener('click', e => {
-  // lógica de modificar cantidades
-});
-
-
-placeOrderBtn.addEventListener('click', () => {
-  // lógica de enviar pedido
-});
-
-closeModalBtn.addEventListener('click', () => {
-  // cerrar modal
-});
-
-newOrderBtn.addEventListener('click', () => {
-  // reiniciar pedido
-});
-
-// Inicializa la interfaz
-renderCategories();
-renderMenu();
-
-// Activa el botón de enviar pedido
-placeOrderBtn.addEventListener('click', () => {
-  if (cart.length > 0) {
-    sendOrderViaWhatsApp();
-  }
-});
-
-// Cierra el modal
 closeModalBtn.addEventListener('click', hideOrderModal);
 newOrderBtn.addEventListener('click', resetOrder);
 modalContainer.addEventListener('click', (e) => {
-  if (e.target === modalContainer) {
-    hideOrderModal();
-  }
+  if (e.target === modalContainer) hideOrderModal();
 });
 
-
 document.body.insertAdjacentHTML('beforeend', '<p style="color:red;">App cargada correctamente</p>');
-
-
 console.log('Elemento totalPriceEl:', document.getElementById('total-price'));
 
 
-document.getElementById('finalizarPedidoBtn').addEventListener('click', () => {
+
+// ✅ Evento del botón Finalizar Pedido
+document.getElementById('finalizarPedidoBtn').addEventListener('click', async () => {
   const canvas = document.getElementById('qrcode');
   const ticketContent = document.getElementById('ticket-content');
   const qrContainer = document.getElementById('qrContainer');
-  const mesa = document.getElementById('table-number').value || 'Sin número';
-
-  // Simulación de productos en el carrito
-  const cart = [
-    { name: 'Café', quantity: 2 },
-    { name: 'Croissant', quantity: 1 }
-  ];
+  const mesa = tableNumberInput.value || 'Sin número';
 
   if (cart.length === 0) {
     ticketContent.textContent = '❌ El carrito está vacío.';
@@ -128,14 +73,15 @@ document.getElementById('finalizarPedidoBtn').addEventListener('click', () => {
     return;
   }
 
-  const pedidoTexto = cart.map(item => `• ${item.quantity}x ${item.name}`).join('\n');
-  const textoVisible = `Mesa: ${mesa}\n\nPedido:\n${pedidoTexto}`;
+  const pedidoId = `PED-${Date.now()}`;
+  const fecha = new Date().toISOString();
+
+  // Mostrar el contenido del pedido
+  const pedidoTexto = cart.map(item => `• ${item.quantity}x ${item.name} (${item.note || 'Sin nota'})`).join('\n');
+  const textoVisible = `Pedido: ${pedidoId}\nMesa: ${mesa}\n\n${pedidoTexto}`;
   ticketContent.textContent = textoVisible;
 
-  const pedidoId = `PED-${Date.now()}`;
-  const pedidoData = { mesa, pedido: cart };
-  localStorage.setItem(pedidoId, JSON.stringify(pedidoData));
-
+  // Generar el QR con el ID del pedido
   new QRious({
     element: canvas,
     value: pedidoId,
@@ -144,4 +90,8 @@ document.getElementById('finalizarPedidoBtn').addEventListener('click', () => {
   });
 
   qrContainer.style.display = 'block';
+
+ 
 });
+
+

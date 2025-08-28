@@ -1,3 +1,7 @@
+
+import { cart } from './cart.js';
+
+
 export function generarQR(cart, mesa) {
   const canvas = document.getElementById('qrcode');
   const ticketContent = document.getElementById('ticket-content');
@@ -58,3 +62,5 @@ document.getElementById('finalizarPedidoBtn').addEventListener('click', () => {
     level: 'L'
   });
 });
+
+//conectar y copiar a bd

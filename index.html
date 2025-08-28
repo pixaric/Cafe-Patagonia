@@ -22,43 +22,20 @@
                 </div>
             </section>
             <aside id="cart">
-              <h2>Tu Pedido</h2>
-              <div class="table-number-container">
-                <label for="table-number">Nº de Mesa:</label>
-                <input type="number" id="table-number" min="1" placeholder="Ej: 5" required>
-              </div>
-              <div id="cart-items">
-                <p class="empty-cart-message">Tu carrito está vacío.</p>
-              </div>
-              <div id="cart-summary">
-                <p>Total: <span id="total-price">€0.00</span></p>
-                <button id="place-order-btn" disabled>Enviar por WhatsApp</button>
-                
-              </div>
-
-             <!-- Botón para generar el QR -->
-<button id="finalizarPedidoBtn">Finalizar pedido</button>
-
-<!-- Contenedor del QR -->
-<div id="qrContainer" style="display: none; margin-top: 20px;">
-  <h3>Tu pedido en QR:</h3>
-  <canvas id="qrcode" width="256" height="256"></canvas>
-  <pre id="ticket-content"></pre>
-</div>
-
-
-<!-- Librería QRCode.js -->
-
-
-
-
-
-
-
-              
-            </aside>
-
-
+                <h2>Tu Pedido</h2>
+                <div class="table-number-container">
+                    <label for="table-number">Nº de Mesa:</label>
+                    <input type="number" id="table-number" min="1" placeholder="Ej: 5" required>
+                </div>
+                <div id="cart-items">
+                    <p class="empty-cart-message">Tu carrito está vacío.</p>
+                </div>
+                <div id="cart-summary">
+                    <p>Total: <span id="total-price">€0.00</span></p>
+                    <button id="place-order-btn" disabled>Enviar por WhatsApp</button>
+                    <button id="finalize-order-btn" disabled>Finalizar Pedido</button>
+                    <div id="order-qr-code"></div>
+                </div>
             </aside>
         </main>
     </div>
@@ -68,77 +45,22 @@
             <button id="close-modal-btn">&times;</button>
             <h2>¡Pedido Recibido!</h2>
             <p>Muestra este código QR en el mostrador.</p>
-            <div id="modal-qrcode"></div>
-            <pre id="modal-ticket-content"></pre>
+            <div id="qrcode"></div>
+            <pre id="ticket-content"></pre>
             <button id="new-order-btn">Nuevo Pedido</button>
         </div>
-        
-
     </div>
 
-<!-- Botón flotante -->
-<button id="scrollBtn" title="Ir" onclick="scrollPage()">
-  ⬇️
-</button>
-
-
-
-<style>
-  #scrollBtn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 999;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    padding: 15px;
-    font-size: 20px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    transition: background-color 0.3s ease;
-  }
-
-  #scrollBtn:hover {
-    background-color: #0056b3;
-  }
-</style>
-
-<script>
-  const scrollBtn = document.getElementById("scrollBtn");
-
-  function scrollPage() {
-    const halfway = document.body.scrollHeight / 2;
-    if (window.scrollY < halfway) {
-      // Ir al final de la página
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    } else {
-      // Ir al principio de la página
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+        "firebase/database": "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"
+      }
     }
-  }
-
-  window.addEventListener("scroll", () => {
-    const halfway = document.body.scrollHeight / 2;
-    if (window.scrollY < halfway) {
-      scrollBtn.textContent = "⬇️"; // Apunta abajo
-    } else {
-      scrollBtn.textContent = "⬆️"; // Apunta arriba
-    }
-  });
-</script>
-
-
-<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
-
-
-<script type="module" src="js/main.js"></script>
-
-
-
-
-
-
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.6.0/dist/easy.qrcode.min.js"></script>
+    <script type="module" src="script.js"></script>
+    <script type="module" src="data.js"></script>
 </body>
 </html>

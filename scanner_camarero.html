@@ -106,25 +106,19 @@
     }
 
     function procesarQR(contenido) {
-  try {
-    // Si el contenido es un ID tipo PED-123456...
-    if (contenido.startsWith('PED-')) {
-      const datos = JSON.parse(localStorage.getItem(contenido));
-      if (!datos || !datos.mesa || !Array.isArray(datos.pedido)) throw new Error();
-      pedidoData = datos;
-      mostrarPedido(datos);
-    } else {
-      // Si el contenido es JSON directo (por si acaso)
-      const datos = JSON.parse(contenido);
-      if (!datos.mesa || !Array.isArray(datos.pedido)) throw new Error();
-      pedidoData = datos;
-      mostrarPedido(datos);
+      try {
+        if (contenido.startsWith('PED-')) {
+          const datos = JSON.parse(localStorage.getItem(contenido));
+          if (!datos || !datos.mesa || !Array.isArray(datos.pedido)) throw new Error();
+          pedidoData = datos;
+          mostrarPedido(datos);
+        } else {
+          document.getElementById('pedido').textContent = '❌ QR inválido o no contiene un ID válido.';
+        }
+      } catch (e) {
+        document.getElementById('pedido').textContent = '❌ No se pudo recuperar el pedido.';
+      }
     }
-  } catch (e) {
-    document.getElementById('pedido').textContent = '❌ QR inválido o no contiene un pedido válido.';
-  }
-}
-
 
     document.getElementById('escanearBtn').addEventListener('click', () => {
       if (escaneoActivo) return;

@@ -42,9 +42,10 @@
 <!-- Contenedor del QR -->
 <div id="qrContainer" style="display: none; margin-top: 20px;">
   <h3>Tu pedido en QR:</h3>
-  <div id="qrcode"></div>
+  <canvas id="qrcode" width="256" height="256"></canvas>
   <pre id="ticket-content"></pre>
 </div>
+
 
 <!-- Librería QRCode.js -->
 
@@ -129,9 +130,17 @@
 </script>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+
+<script type="module" src="./firebase.js"></script> <!-- si está en la raíz -->
 
 <script type="module" src="js/main.js"></script>
+
+
+
+
+
+
 
 
 
