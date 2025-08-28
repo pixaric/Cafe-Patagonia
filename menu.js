@@ -29,7 +29,7 @@ export const menuData = [
        { id: 10, name: 'Cola Cao', category: 'Cafés', price: 1.50, image: 'images/cola_cao.png', description: 'Leche con cacao en polvo, un clásico.', allergens: ['lactose'] },
 
         // Desayunos
-[
+
   { id: 11, name: 'Tostada con Mantequilla y Mermelada', category: 'Desayunos', price: 1.50, image: 'images/tostada_mermelada.png', description: 'Tostada de pan de pueblo clásica.', allergens: ['gluten'] },
   { id: 12, name: 'Tostada con Tomate y Aceite', category: 'Desayunos', price: 1.50, image: 'images/tostada_tomate.png', description: 'La tostada mediterránea por excelencia.', allergens: ['gluten'] },
   { id: 13, name: 'Tostada con Jamón y Tomate', category: 'Desayunos', price: 2.00, image: 'images/tostada_jamon.png', description: 'Jamón serrano sobre pan con tomate y aceite.', allergens: ['gluten'] },
@@ -39,7 +39,7 @@ export const menuData = [
   { id: 17, name: 'Donut', category: 'Desayunos', price: 1.50, image: 'images/donut.png', description: 'Clásico donut glaseado.', allergens: ['gluten', 'lactose', 'eggs'] },
   { id: 18, name: 'Muffin', category: 'Desayunos', price: 1.50, image: 'images/muffin.png', description: 'Muffin con pepitas de chocolate.', allergens: ['gluten', 'lactose', 'eggs'] },
 
-// Bocadillos
+  // Bocadillos
   { id: 19, name: 'Bocadillo de Jamón', category: 'Bocadillos', price: 3.00, image: 'images/bocadillo_jamon.png', description: 'Bocadillo de jamón serrano y aceite de oliva.', allergens: ['gluten'] },
   { id: 20, name: 'Bocadillo de Jamón y Queso', category: 'Bocadillos', price: 3.50, image: 'images/bocadillo_jamon_queso.png', description: 'El combinado perfecto en pan de barra.', allergens: ['gluten', 'lactose'] },
   { id: 21, name: 'Bocadillo de Queso', category: 'Bocadillos', price: 3.00, image: 'images/bocadillo_queso.png', description: 'Queso manchego en pan de barra.', allergens: ['gluten', 'lactose'] },
@@ -48,12 +48,12 @@ export const menuData = [
   { id: 24, name: 'Bocadillo de Atún con Tomate', category: 'Bocadillos', price: 3.50, image: 'images/bocadillo_atun.png', description: 'Atún en aceite de oliva con tomate triturado.', allergens: ['gluten'] },
   { id: 25, name: 'Bocadillo de Tortilla Francesa', category: 'Bocadillos', price: 3.50, image: 'images/bocadillo_tortilla_francesa.png', description: 'Tortilla francesa recién hecha.', allergens: ['gluten', 'eggs'] },
   { id: 26, name: 'Bocadillo de Tortilla de Patata', category: 'Bocadillos', price: 3.50, image: 'images/bocadillo_tortilla_patata.png', description: 'Un clásico que nunca falla.', allergens: ['gluten', 'eggs'] },
-  { id: 27, name: 'Bocadillo Vegetal', category: 'Bocadillos', price: 4.00, image: 'images/bocadillo_vegetal.png', description: 'Lechuga, tomate, cebolla, espárragos y mayonesa.', allergens: ['gluten', 'eggs'] }
-],
+  { id: 27, name: 'Bocadillo Vegetal', category: 'Bocadillos', price: 4.00, image: 'images/bocadillo_vegetal.png', description: 'Lechuga, tomate, cebolla, espárragos y mayonesa.', allergens: ['gluten', 'eggs'] },
 
 
-      [
+      
   // Hamburguesas
+  
   { id: 30, name: 'Hamburguesa', category: 'Hamburguesas', price: 4.00, image: 'images/hamburguesa.png', description: 'Carne de ternera, lechuga, tomate y cebolla.', allergens: ['gluten'] },
   { id: 31, name: 'Hamburguesa con Queso', category: 'Hamburguesas', price: 4.50, image: 'images/hamburguesa_queso.png', description: 'Nuestra hamburguesa clásica con queso fundido.', allergens: ['gluten', 'lactose'] },
   { id: 32, name: 'Hamburguesa Completa', category: 'Hamburguesas', price: 5.00, image: 'images/hamburguesa_completa.png', description: 'Con todo: queso, bacon, huevo frito, lechuga y tomate.', allergens: ['gluten', 'lactose', 'eggs'] },
@@ -90,8 +90,7 @@ export const menuData = [
   { id: 53, name: 'Whisky', category: 'Copas', price: 5.00, image: 'images/whisky.png', description: 'Whisky solo o con refresco.', allergens: [] },
   { id: 54, name: 'Vodka', category: 'Copas', price: 5.00, image: 'images/vodka.png', description: 'Vodka con naranja, limón o tónica.', allergens: [] },
   { id: 55, name: 'Combinado Nacional', category: 'Copas', price: 5.00, image: 'images/combinado_nacional.png', description: 'Licores nacionales con refresco.', allergens: [] },
-  { id: 56, name: 'Combinado Importación', category: 'Copas', price: 6.00, image: 'images/combinado_importacion.png', description: 'Licores de importación con refresco.', allergens: [] }
-],
+  { id: 56, name: 'Combinado Importación', category: 'Copas', price: 6.00, image: 'images/combinado_importacion.png', description: 'Licores de importación con refresco.', allergens: [] },
 
 // Nuevos productos Alemanes
 

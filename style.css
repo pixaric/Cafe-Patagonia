@@ -484,3 +484,10 @@ main {
         border-radius: 5px;
     }
 }
+
+/*contenedor qr*/
+#order-qr-code {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}

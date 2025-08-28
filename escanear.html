@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Escanear QR y Enviar Pedido</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+    #preview { width: 100%; max-width: 400px; margin-bottom: 20px; display: none; }
+    #ticket-content { white-space: pre-wrap; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); min-height: 100px; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>📷 Escanear Pedido</h1>
+  <button id="start-scan-btn">Escanear QR</button>
+  <video id="preview"></video>
+  <div id="ticket-content">Esperando escaneo...</div>
+  <button id="enviar-btn" disabled>Enviar a Firebase</button>
+
+  <!-- Librería para escanear QR -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <!-- Firebase -->
+  <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+        "firebase/database": "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"
+      }
+    }
+  </script>
+  <script type="module">
+    import { initializeApp } from "firebase/app";
+    import { getDatabase, ref, push } from "firebase/database";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFdTREJvegUdsOUc7A0-NTOvKemQmTGyI",
+      authDomain: "pedidosqr-34bea.firebaseapp.com",
+      databaseURL: "https://pedidosqr-34bea-default-rtdb.firebaseio.com",
+      projectId: "pedidosqr-34bea",
+      storageBucket: "pedidosqr-34bea.appspot.com",
+      messagingSenderId: "743534119824",
+      appId: "1:743534119824:web:17cf79d3b6952380084115"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const ticketEl = document.getElementById("ticket-content");
+    const enviarBtn = document.getElementById("enviar-btn");
+    const startScanBtn = document.getElementById("start-scan-btn");
+    const previewEl = document.getElementById("preview");
+
+    let contenidoEscaneado = "";
+    let html5QrCode;
+
+    startScanBtn.addEventListener("click", () => {
+      previewEl.style.display = "block";
+      startScanBtn.disabled = true;
+
+      html5QrCode = new Html5Qrcode("preview");
+      html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        qrText => {
+          contenidoEscaneado = qrText;
+          ticketEl.textContent = qrText;
+          enviarBtn.disabled = false;
+          html5QrCode.stop();
+          previewEl.style.display = "none";
+        },
+        error => {
+          // Ignorar errores de escaneo
+        }
+      );
+    });
+
+    enviarBtn.addEventListener("click", () => {
+      if (!contenidoEscaneado) return;
+      push(ref(db, "orders"), {
+        ticketText: contenidoEscaneado,
+        timestamp: Date.now()
+      });
+      enviarBtn.disabled = true;
+      enviarBtn.textContent = "✅ Enviado";
+    });
+  </script>
+</body>
+</html>

@@ -33,8 +33,17 @@
                 <div id="cart-summary">
                     <p>Total: <span id="total-price">€0.00</span></p>
                     <button id="place-order-btn" disabled>Enviar por WhatsApp</button>
-                    <button id="finalize-order-btn" disabled>Finalizar Pedido</button>
-                    <div id="order-qr-code"></div>
+                    <button id="finalize-order-btn">Finalizar Pedido</button>
+                    
+                    
+                    <div id="ticket-content" style="white-space: pre;"></div>
+                    
+
+                    <canvas id="order-qr-code"></canvas>
+
+
+
+
                 </div>
             </aside>
         </main>
@@ -59,8 +68,10 @@
       }
     }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.6.0/dist/easy.qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+
+
     <script type="module" src="script.js"></script>
-    <script type="module" src="data.js"></script>
+    
 </body>
 </html>

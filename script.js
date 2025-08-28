@@ -1,7 +1,11 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, push, set } from "firebase/database";
 
-import { database, menuData, allergenEmojis } from './data.js';
+import { database, menuData, allergenEmojis } from './menu.js';
+import { showOrderQRCode } from './qrGenerator.js';
+
+
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -9,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const firebaseConfig = {
       apiKey: "AIzaSyDFdTREJvegUdsOUc7A0-NTOvKemQmTGyI",
       authDomain: "pedidosqr-34bea.firebaseapp.com",
+      //databaseURL: "https://pedidosqr-34bea-default-rtdb.firebaseio.com", // ← este es el que falta
       projectId: "pedidosqr-34bea",
       storageBucket: "pedidosqr-34bea.firebasestorage.app",
       messagingSenderId: "743534119824",
@@ -73,6 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('click', initAudio, { once: true });
 
     function renderMenu(filter = 'Todos') {
+        console.log('menuData:', menuData); //temporal
+
         menuItemsContainer.innerHTML = '';
         const filteredData = filter === 'Todos' ? menuData : menuData.filter(item => item.category === filter);
         
@@ -147,6 +154,20 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCart();
     }
 
+    //qr actualizable
+function actualizarQR() {
+  const qrCanvas = document.getElementById("order-qr-code");
+  if (!qrCanvas || cart.length === 0) return;
+
+  const ticketText = generateTicketText();
+
+  new QRious({
+    element: qrCanvas,
+    value: ticketText,
+    size: 250
+  });
+}
+
     function renderCart() {
         if (cart.length === 0) {
             cartItemsContainer.innerHTML = '<p class="empty-cart-message">Tu carrito está vacío.</p>';
@@ -169,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         updateTotal();
+        actualizarQR();
     }
 
     function updateTotal() {
@@ -368,7 +390,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Set the data at that reference
             await set(newOrderRef, orderData);
             
-            const orderId = newOrderRef.key;
+            
+
+            // 👇 Aquí es donde debes insertar la llamada al QR
+        const orderId = newOrderRef.key;
+        showOrderQRCode(orderQrCodeContainer, orderId);
+
             
             // Generate and display QR code in the cart
             orderQrCodeContainer.innerHTML = '';
@@ -407,6 +434,12 @@ document.addEventListener('DOMContentLoaded', () => {
             hideOrderModal();
         }
     });
+
+
+
+
+
+
 
     // Initial Render
     renderCategories();
