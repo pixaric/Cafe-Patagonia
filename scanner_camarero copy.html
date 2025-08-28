@@ -242,45 +242,24 @@ document.getElementById("escanearBtn").addEventListener("click", () => {
 guardarBtn.addEventListener("click", () => {
   if (!contenidoEscaneado) return;
 
-  const lineas = contenidoEscaneado.split("\n").map(l => l.trim()).filter(l => l);
-  const mesaLine = lineas.find(l => l.toLowerCase().startsWith("mesa"));
-  const mesa = mesaLine ? mesaLine.split(":")[1].trim() : "desconocida";
+  push(ref(db, "orders"), {
+    ticketText: contenidoEscaneado,
+    timestamp: Date.now()
+  });
 
-  const productos = lineas
-    .filter(l => !l.toLowerCase().startsWith("mesa"))
-    .map(l => {
-      const partes = l.split("x");
-      const producto = partes[0].trim();
-      const cantidad = partes[1] ? parseInt(partes[1].trim()) : 1;
-      return { producto, cantidad };
-    });
-
-  const pedido = {
-    fecha: new Date().toLocaleDateString(),
-    hora: new Date().toLocaleTimeString(),
-    mesa,
-    productos
-  };
-
-  push(ref(db, "pedidos"), pedido)
-    .then(() => {
-      guardarBtn.disabled = true;
-      guardarBtn.textContent = "✅ Guardado";
-      alert("Pedido guardado correctamente");
-    })
-    .catch(err => {
-      console.error("Error al guardar:", err);
-      alert("❌ No se pudo guardar el pedido");
-    });
+  guardarBtn.disabled = true;
+  guardarBtn.textContent = "✅ Guardado";
 });
-
-
 imprimirBtn.addEventListener("click", () => {
   window.print();
 });
 
-
-
+setTimeout(() => {
+  html5QrCode.stop();
+  escaneoActivo = false;
+  document.getElementById("reader").style.display = "none";
+  procesarQR(decodedText);
+}, 300);
 
 (errorMessage) => {
   escaneoActivo = false;
