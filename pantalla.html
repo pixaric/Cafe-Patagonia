@@ -28,7 +28,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const pedidosRef = ref(db, "orders");
+    const pedidosRef = ref(db, "pedidos");
 
     const container = document.getElementById("pedidos-container");
 
@@ -36,7 +36,7 @@
       const pedido = snapshot.val();
       const div = document.createElement("div");
       div.className = "pedido";
-      div.textContent = `🪑 Mesa ${pedido.mesa || '—'}\n\n${pedido.ticketText}`;
+      div.textContent = `🕒 ${new Date(pedido.timestamp).toLocaleString()}\n\n${pedido.ticketText}`;
       container.prepend(div);
     });
   </script>

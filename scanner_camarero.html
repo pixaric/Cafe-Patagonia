@@ -91,6 +91,9 @@
   <div class="acciones">
     <button id="guardarBtn" disabled>💾 Guardar en BD</button>
     <button id="imprimirBtn" disabled>🖨️ Imprimir</button>
+
+    <button id="telegramBtn" disabled>📨 Enviar por Telegram</button>
+
   </div>
 
   <script type="importmap">
@@ -133,6 +136,8 @@ function procesarQR(texto) {
   pedidoEl.textContent = texto;
   guardarBtn.disabled = false;
   imprimirBtn.disabled = false;
+  telegramBtn.disabled = false;
+
 }
 
 document.getElementById("escanearBtn").addEventListener("click", () => {
@@ -171,14 +176,26 @@ document.getElementById("escanearBtn").addEventListener("click", () => {
 guardarBtn.addEventListener("click", () => {
   if (!contenidoEscaneado) return;
 
-  push(ref(db, "orders"), {
+  // Puedes estructurar el ticket si viene en formato plano
+  const ticket = {
     ticketText: contenidoEscaneado,
-    timestamp: Date.now()
-  });
+    timestamp: Date.now(),
+    estado: "pendiente"
+  };
 
-  guardarBtn.disabled = true;
-  guardarBtn.textContent = "✅ Guardado";
+  push(ref(db, "pedidos"), ticket)
+    .then(() => {
+      guardarBtn.disabled = true;
+      guardarBtn.textContent = "✅ Guardado";
+      alert("Pedido guardado en Firebase");
+    })
+    .catch(err => {
+      console.error("Error al guardar:", err);
+      alert("❌ No se pudo guardar el pedido");
+    });
 });
+
+
 imprimirBtn.addEventListener("click", () => {
   window.print();
 });
@@ -194,6 +211,15 @@ setTimeout(() => {
   escaneoActivo = false;
 }
 
+const telegramBtn = document.getElementById("telegramBtn");
+
+telegramBtn.addEventListener("click", () => {
+  if (!contenidoEscaneado) return;
+
+  const mensaje = encodeURIComponent(contenidoEscaneado);
+  const telegramURL = `https://t.me/share/url?url=&text=${mensaje}`;
+  window.open(telegramURL, "_blank");
+});
 
 
 </script>
