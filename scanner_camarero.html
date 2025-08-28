@@ -165,6 +165,7 @@
 }
 </script>
 <script type="module">
+
 import { ref, push } from "firebase/database";
 import { db } from "./firebase-config.js";
 
@@ -242,24 +243,14 @@ document.getElementById("escanearBtn").addEventListener("click", () => {
 guardarBtn.addEventListener("click", () => {
   if (!contenidoEscaneado) return;
 
-  const lineas = contenidoEscaneado.split("\n").map(l => l.trim()).filter(l => l);
-  const mesaLine = lineas.find(l => l.toLowerCase().startsWith("mesa"));
-  const mesa = mesaLine ? mesaLine.split(":")[1].trim() : "desconocida";
-
-  const productos = lineas
-    .filter(l => !l.toLowerCase().startsWith("mesa"))
-    .map(l => {
-      const partes = l.split("x");
-      const producto = partes[0].trim();
-      const cantidad = partes[1] ? parseInt(partes[1].trim()) : 1;
-      return { producto, cantidad };
-    });
-
   const pedido = {
     fecha: new Date().toLocaleDateString(),
     hora: new Date().toLocaleTimeString(),
-    mesa,
-    productos
+    mesa: "4", // o extraída del contenido
+    productos: [
+      { producto: "Café", cantidad: 2 },
+      { producto: "Croissant", cantidad: 1 }
+    ]
   };
 
   push(ref(db, "pedidos"), pedido)
@@ -273,6 +264,7 @@ guardarBtn.addEventListener("click", () => {
       alert("❌ No se pudo guardar el pedido");
     });
 });
+
 
 
 imprimirBtn.addEventListener("click", () => {
