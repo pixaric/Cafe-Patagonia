@@ -85,7 +85,7 @@
   <h2>📷 Scanner Camarero</h2>
   <button id="escanearBtn">Escanear QR</button>
   <div id="reader"></div>
-
+<h3>🧾 Pedido Escaneado</h3>
   <pre id="pedido">Esperando escaneo...</pre>
 
   <div class="acciones">
@@ -166,6 +166,23 @@ guardarBtn.addEventListener("click", () => {
 imprimirBtn.addEventListener("click", () => {
   window.print();
 });
+
+setTimeout(() => {
+  html5QrCode.stop();
+  escaneoActivo = false;
+  document.getElementById("reader").style.display = "none";
+  procesarQR(decodedText);
+}, 300);
+
+(errorMessage) => {
+  escaneoActivo = false;
+}
+if (!contenidoEscaneado || contenidoEscaneado.length < 10) {
+  alert("❌ El contenido del QR es inválido o demasiado corto.");
+  return;
+}
+
+
 </script>
 
 </body>
