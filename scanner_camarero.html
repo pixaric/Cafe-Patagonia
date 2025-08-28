@@ -4,85 +4,148 @@
   <meta charset="UTF-8">
   <title>Scanner Camarero</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f9f9f9;
-      padding: 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+  
+    <style>
+  :root {
+    --azul: #0078D4;
+    --verde: #28a745;
+    --amarillo: #ffc107;
+    --gris-claro: #f9f9f9;
+    --gris-borde: #ddd;
+    --fuente: 'Segoe UI', sans-serif;
+  }
 
-    h2 {
-      margin-bottom: 20px;
-      color: #333;
-    }
+  * {
+    box-sizing: border-box;
+  }
 
-    #escanearBtn {
-      background-color: #0078D4;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-bottom: 20px;
-    }
+  body {
+    font-family: var(--fuente);
+    background: var(--gris-claro);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-    #reader {
-      width: 320px;
-      margin-bottom: 30px;
-      display: none;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      background: white;
-    }
+  h2, h3 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 15px;
+  }
 
-    #pedido {
-      width: 100%;
-      max-width: 500px;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      font-size: 16px;
-      white-space: pre-wrap;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+  }
 
-    .acciones {
-      display: flex;
-      gap: 15px;
+  input[type="text"] {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid var(--gris-borde);
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 10px;
+  }
+
+  #mensajeMesa {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  #escanearBtn {
+    background-color: var(--azul);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  #reader {
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 20px;
+    border: 2px solid var(--gris-borde);
+    border-radius: 8px;
+    background: white;
+    display: none;
+  }
+
+  #pedido {
+    width: 100%;
+    max-width: 500px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--gris-borde);
+    font-size: 16px;
+    white-space: pre-wrap;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  .acciones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .acciones button {
+    flex: 1 1 45%;
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    min-width: 130px;
+  }
+
+  #guardarBtn {
+    background-color: var(--verde);
+    color: white;
+  }
+
+  #imprimirBtn {
+    background-color: var(--amarillo);
+    color: black;
+  }
+
+  button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @media screen and (max-width: 480px) {
+    input[type="text"], #escanearBtn {
+      max-width: 100%;
     }
 
     .acciones button {
-      padding: 10px 20px;
-      font-size: 15px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
+      flex: 1 1 100%;
     }
+  }
+</style>
 
-    #guardarBtn {
-      background-color: #28a745;
-      color: white;
-    }
-
-    #imprimirBtn {
-      background-color: #ffc107;
-      color: black;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-  </style>
 </head>
 <body>
   <h2>📷 Scanner Camarero</h2>
+  <label for="mesaInput">Número de mesa:</label>
+<input type="text" id="mesaInput" placeholder="Ej. 5" style="margin-bottom: 20px; padding: 10px; font-size: 16px; border-radius: 6px; border: 1px solid #ccc; width: 200px;">
+<div id="mensajeMesa" style="color: red; margin-bottom: 10px;"></div>
+
   <button id="escanearBtn">Escanear QR</button>
   <div id="reader"></div>
 <h3>🧾 Pedido Escaneado</h3>
@@ -136,6 +199,16 @@ function procesarQR(texto) {
 }
 
 document.getElementById("escanearBtn").addEventListener("click", () => {
+  const mesa = document.getElementById("mesaInput").value.trim();
+  const mensajeMesa = document.getElementById("mensajeMesa");
+
+  if (!mesa) {
+    mensajeMesa.textContent = "⚠️ Por favor, ingresa el número de mesa antes de escanear.";
+    return;
+  }
+
+  mensajeMesa.textContent = ""; // Limpiar mensaje si todo está bien
+
   if (escaneoActivo) return;
 
   escaneoActivo = true;
@@ -147,17 +220,15 @@ document.getElementById("escanearBtn").addEventListener("click", () => {
     { facingMode: "environment" },
     { fps: 10, qrbox: 250 },
     (decodedText) => {
-      setTimeout(() => {
-        if (html5QrCode) {
-          html5QrCode.stop().then(() => {
-            escaneoActivo = false;
-            document.getElementById("reader").style.display = "none";
-            procesarQR(decodedText);
-          }).catch(err => {
-            console.error("Error al detener el escaneo:", err);
-          });
-        }
-      }, 300);
+      html5QrCode.stop().then(() => {
+        escaneoActivo = false;
+        document.getElementById("reader").style.display = "none";
+
+        const ticketFinal = `Mesa: ${mesa}\n\n${decodedText}`;
+        procesarQR(ticketFinal);
+      }).catch(err => {
+        console.error("Error al detener el escaneo:", err);
+      });
     },
     (errorMessage) => {
       console.warn("Error de escaneo:", errorMessage);
