@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Acceso Camarero</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #0078D4;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>🔐 Acceso Camarero</h2>
+  <input type="text" id="usuario" placeholder="Usuario">
+  <input type="password" id="clave" placeholder="Contraseña">
+  <button id="loginBtn">Entrar</button>
+
+<script type="importmap">
+{
+  "imports": {
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"
+  }
+}
+</script>
+
+  <script type="module">
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDFdTREJvegUdsOUc7A0-NTOvKemQmTGyI",
+  authDomain: "pedidosqr-34bea.firebaseapp.com",
+  databaseURL: "https://pedidosqr-34bea-default-rtdb.firebaseio.com",
+  projectId: "pedidosqr-34bea",
+  storageBucket: "pedidosqr-34bea.appspot.com",
+  messagingSenderId: "743534119824",
+  appId: "1:743534119824:web:17cf79d3b6952380084115"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+document.getElementById("loginBtn").addEventListener("click", () => {
+  const email = document.getElementById("usuario").value.trim();
+  const password = document.getElementById("clave").value.trim();
+
+signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      window.location.href = "scanner_camarero.html";
+    })
+    .catch((error) => {
+      let mensaje = "❌ Error al iniciar sesión.";
+      switch (error.code) {
+        case "auth/user-not-found":
+          mensaje = "❌ El usuario no existe.";
+          break;
+        case "auth/wrong-password":
+          mensaje = "❌ Contraseña incorrecta.";
+          break;
+        case "auth/invalid-email":
+          mensaje = "❌ El formato del correo no es válido.";
+          break;
+        case "auth/too-many-requests":
+          mensaje = "⚠️ Demasiados intentos. Intenta más tarde.";
+          break;
+      }
+      alert(mensaje);
+      console.error("Error de login:", error);
+    });
+
+});
+</script>
+
+</body>
+</html>

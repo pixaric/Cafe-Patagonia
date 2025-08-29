@@ -151,10 +151,15 @@
 <h3>🧾 Pedido Escaneado</h3>
   <pre id="pedido">Esperando escaneo...</pre>
 
+  <label for="comentarioInput">Comentarios:</label>
+<textarea id="comentarioInput" placeholder="Ej. sin azúcar, urgente..." rows="3" style="margin-bottom: 20px; padding: 10px; font-size: 16px; border-radius: 6px; border: 1px solid #ccc; width: 100%; max-width: 300px;"></textarea>
+
   <div class="acciones">
     <button id="guardarBtn" disabled>💾 Guardar en BD</button>
     <button id="imprimirBtn" disabled>🖨️ Imprimir</button>
   </div>
+
+  
 
   <script type="importmap">
 {
@@ -165,6 +170,10 @@
 }
 </script>
 <script type="module">
+  if (sessionStorage.getItem("usuarioAutenticado") !== "true") {
+  window.location.href = "login.html";
+}
+
 
 import { ref, push } from "firebase/database";
 import { db } from "./firebase-config.js";
@@ -178,6 +187,15 @@ const firebaseConfig = {
   messagingSenderId: "743534119824",
   appId: "1:743534119824:web:17cf79d3b6952380084115"
 };
+
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+const auth = getAuth();
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "login.html";
+  }
+});
 
 
 
@@ -194,10 +212,12 @@ const imprimirBtn = document.getElementById("imprimirBtn");
 
 function procesarQR(texto) {
   contenidoEscaneado = texto;
-  pedidoEl.textContent = texto;
+  actualizarVistaPedido();
   guardarBtn.disabled = false;
   imprimirBtn.disabled = false;
 }
+
+
 
 document.getElementById("escanearBtn").addEventListener("click", () => {
   const mesa = document.getElementById("mesaInput").value.trim();
@@ -243,14 +263,27 @@ document.getElementById("escanearBtn").addEventListener("click", () => {
 guardarBtn.addEventListener("click", () => {
   if (!contenidoEscaneado) return;
 
+  const comentario = document.getElementById("comentarioInput").value.trim();
+
+  const lineas = contenidoEscaneado.split("\n").map(l => l.trim()).filter(l => l);
+  const mesaLine = lineas.find(l => l.toLowerCase().startsWith("mesa"));
+  const mesa = mesaLine ? mesaLine.split(":")[1].trim() : "desconocida";
+
+  const productos = lineas
+    .filter(l => !l.toLowerCase().startsWith("mesa"))
+    .map(l => {
+      const partes = l.split("x");
+      const producto = partes[0].trim();
+      const cantidad = partes[1] ? parseInt(partes[1].trim()) : 1;
+      return { producto, cantidad };
+    });
+
   const pedido = {
     fecha: new Date().toLocaleDateString(),
     hora: new Date().toLocaleTimeString(),
-    mesa: "4", // o extraída del contenido
-    productos: [
-      { producto: "Café", cantidad: 2 },
-      { producto: "Croissant", cantidad: 1 }
-    ]
+    mesa,
+    comentario,
+    productos
   };
 
   push(ref(db, "pedidos"), pedido)
@@ -265,6 +298,16 @@ guardarBtn.addEventListener("click", () => {
     });
 });
 
+
+function actualizarVistaPedido() {
+  const comentario = document.getElementById("comentarioInput").value.trim();
+  const textoFinal = comentario
+    ? `${contenidoEscaneado}\n\nComentario: ${comentario}`
+    : contenidoEscaneado;
+login
+  pedidoEl.textContent = textoFinal;
+}
+document.getElementById("comentarioInput").addEventListener("input", actualizarVistaPedido);
 
 
 imprimirBtn.addEventListener("click", () => {
