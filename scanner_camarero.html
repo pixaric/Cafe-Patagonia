@@ -7,7 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Scanner Camarero</title>
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
   
     <style>
   :root {
@@ -169,6 +170,9 @@ textarea, input, button {
   <h2>📷 Scanner Camarero</h2>
   <label for="mesaInput">Número de mesa:</label>
 <input type="text" id="mesaInput" placeholder="Ej. 5" style="margin-bottom: 20px; padding: 10px; font-size: 16px; border-radius: 6px; border: 1px solid #ccc; width: 200px;">
+
+<div id="nombreCamarero" style="margin-bottom: 15px; font-weight: bold; font-size: 16px;"></div>
+
 <div id="mensajeMesa" style="color: red; margin-bottom: 10px;"></div>
 
   <button id="escanearBtn">Escanear QR</button>
@@ -187,23 +191,24 @@ textarea, input, button {
   <button id="logoutBtn">Cerrar sesión</button>
 
 
-  <script type="importmap">
+<script type="importmap">
 {
   "imports": {
     "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
-    "firebase/database": "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"
+    "firebase/database": "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"
   }
 }
 </script>
+
+
+
+</script>
+
 <script type="module">
-  if (sessionStorage.getItem("usuarioAutenticado") !== "true") {
-  window.location.href = "login.html";
-}
-
-
-import { ref, push } from "firebase/database";
-import { db } from "./firebase-config.js";
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDFdTREJvegUdsOUc7A0-NTOvKemQmTGyI",
@@ -215,57 +220,58 @@ const firebaseConfig = {
   appId: "1:743534119824:web:17cf79d3b6952380084115"
 };
 
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-
 const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 const auth = getAuth(app);
 
-// 🔐 Verificar si el usuario está autenticado
 onAuthStateChanged(auth, (user) => {
   if (!user) {
-    // Si no hay sesión, redirigir al login
     window.location.href = "login.html";
+  } else {
+    const nombreEl = document.getElementById("nombreCamarero");
+    nombreEl.textContent = `👤 Camarero: ${user.email}`;
   }
 });
-
-
 
 
 let contenidoEscaneado = "";
 let escaneoActivo = false;
 let html5QrCode = null;
 
-
-
 const pedidoEl = document.getElementById("pedido");
 const guardarBtn = document.getElementById("guardarBtn");
-const imprimirBtn = document.getElementById("imprimirBtn");
+const comentarioInput = document.getElementById("comentarioInput");
 
 function procesarQR(texto) {
   contenidoEscaneado = texto;
   actualizarVistaPedido();
   guardarBtn.disabled = false;
-  imprimirBtn.disabled = false;
 }
 
+function actualizarVistaPedido() {
+  const comentario = comentarioInput.value.trim();
+  const textoFinal = comentario
+    ? `${contenidoEscaneado}\n\nComentario: ${comentario}`
+    : contenidoEscaneado;
+  pedidoEl.textContent = textoFinal;
+}
 
+comentarioInput.addEventListener("input", actualizarVistaPedido);
 
 document.getElementById("escanearBtn").addEventListener("click", () => {
   const mesa = document.getElementById("mesaInput").value.trim();
   const mensajeMesa = document.getElementById("mensajeMesa");
 
   if (!mesa) {
-    mensajeMesa.textContent = "⚠️ Por favor, ingresa el número de mesa antes de escanear.";
+    mensajeMesa.textContent = "⚠️ Ingresa el número de mesa.";
     return;
   }
 
-  mensajeMesa.textContent = ""; // Limpiar mensaje si todo está bien
-
+  mensajeMesa.textContent = "";
   if (escaneoActivo) return;
 
   escaneoActivo = true;
   document.getElementById("reader").style.display = "block";
-
   html5QrCode = new Html5Qrcode("reader");
 
   html5QrCode.start(
@@ -275,11 +281,8 @@ document.getElementById("escanearBtn").addEventListener("click", () => {
       html5QrCode.stop().then(() => {
         escaneoActivo = false;
         document.getElementById("reader").style.display = "none";
-
         const ticketFinal = `Mesa: ${mesa}\n\n${decodedText}`;
         procesarQR(ticketFinal);
-      }).catch(err => {
-        console.error("Error al detener el escaneo:", err);
       });
     },
     (errorMessage) => {
@@ -288,20 +291,14 @@ document.getElementById("escanearBtn").addEventListener("click", () => {
   );
 });
 
-
-
-
 guardarBtn.addEventListener("click", () => {
-  if (!contenidoEscaneado) return;
-
-  const comentario = document.getElementById("comentarioInput").value.trim();
-
+  const comentario = comentarioInput.value.trim();
   const lineas = contenidoEscaneado.split("\n").map(l => l.trim()).filter(l => l);
   const mesaLine = lineas.find(l => l.toLowerCase().startsWith("mesa"));
   const mesa = mesaLine ? mesaLine.split(":")[1].trim() : "desconocida";
 
   const productos = lineas
-    .filter(l => !l.toLowerCase().startsWith("mesa"))
+    .filter(l => !l.toLowerCase().startsWith("mesa") && !l.toLowerCase().startsWith("comentario"))
     .map(l => {
       const partes = l.split("x");
       const producto = partes[0].trim();
@@ -329,56 +326,14 @@ guardarBtn.addEventListener("click", () => {
     });
 });
 
-
-function actualizarVistaPedido() {
-  const comentario = document.getElementById("comentarioInput").value.trim();
-  const textoFinal = comentario
-    ? `${contenidoEscaneado}\n\nComentario: ${comentario}`
-    : contenidoEscaneado;
-login
-  pedidoEl.textContent = textoFinal;
-}
-document.getElementById("comentarioInput").addEventListener("input", actualizarVistaPedido);
-
-
-imprimirBtn.addEventListener("click", () => {
-  window.print();
-});
-
-html5QrCode.start(
-  { facingMode: "environment" },
-  { fps: 10, qrbox: 250 },
-  (decodedText) => {
-    html5QrCode.stop().then(() => {
-      escaneoActivo = false;
-      document.getElementById("reader").style.display = "none";
-      procesarQR(decodedText);
-    }).catch(err => {
-      console.error("Error al detener el escaneo:", err);
-    });
-  },
-  (errorMessage) => {
-    // No cerrar el escáner aquí
-    console.warn("Error de escaneo:", errorMessage);
-  }
-);
-
-
-
-(errorMessage) => {
-  escaneoActivo = false;
-}
-
-import { signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
 document.getElementById("logoutBtn").addEventListener("click", () => {
   signOut(auth).then(() => {
     window.location.href = "login.html";
   });
 });
-
-
 </script>
+
+
 
 </body>
 </html>

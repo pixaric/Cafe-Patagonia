@@ -156,17 +156,32 @@
     <button id="imprimirBtn" disabled>🖨️ Imprimir</button>
   </div>
 
-  <script type="importmap">
+<script type="importmap">
 {
   "imports": {
     "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
-    "firebase/database": "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"
+    "firebase/database": "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"
   }
 }
+</script>
+
 </script>
 <script type="module">
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, push } from "firebase/database";
+import { Html5Qrcode } from "https://unpkg.com/html5-qrcode?module";
+
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+const auth = getAuth();
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "login.html";
+  }
+});
+
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyDFdTREJvegUdsOUc7A0-NTOvKemQmTGyI",
@@ -176,7 +191,9 @@ const firebaseConfig = {
   storageBucket: "pedidosqr-34bea.appspot.com",
   messagingSenderId: "743534119824",
   appId: "1:743534119824:web:17cf79d3b6952380084115"
+  
 };
+
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -214,6 +231,7 @@ document.getElementById("escanearBtn").addEventListener("click", () => {
   escaneoActivo = true;
   document.getElementById("reader").style.display = "block";
 
+  
   html5QrCode = new Html5Qrcode("reader");
 
   html5QrCode.start(
@@ -254,16 +272,9 @@ imprimirBtn.addEventListener("click", () => {
   window.print();
 });
 
-setTimeout(() => {
-  html5QrCode.stop();
-  escaneoActivo = false;
-  document.getElementById("reader").style.display = "none";
-  procesarQR(decodedText);
-}, 300);
 
-(errorMessage) => {
-  escaneoActivo = false;
-}
+
+
 
 
 
