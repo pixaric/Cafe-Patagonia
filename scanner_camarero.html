@@ -271,6 +271,23 @@ imprimirBtn.addEventListener("click", () => {
   window.print();
 });
 
+html5QrCode.start(
+  { facingMode: "environment" },
+  { fps: 10, qrbox: 250 },
+  (decodedText) => {
+    html5QrCode.stop().then(() => {
+      escaneoActivo = false;
+      document.getElementById("reader").style.display = "none";
+      procesarQR(decodedText);
+    }).catch(err => {
+      console.error("Error al detener el escaneo:", err);
+    });
+  },
+  (errorMessage) => {
+    // No cerrar el escáner aquí
+    console.warn("Error de escaneo:", errorMessage);
+  }
+);
 
 
 
