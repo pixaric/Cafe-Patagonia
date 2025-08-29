@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+  
 <head>
+
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Scanner Camarero</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
   
@@ -73,8 +77,8 @@
 
   #reader {
     width: 100%;
-    max-width: 320px;
-    margin-bottom: 20px;
+    max-width: 400px;
+    margin-bottom: auto;
     border: 2px solid var(--gris-borde);
     border-radius: 8px;
     background: white;
@@ -128,6 +132,20 @@
     cursor: not-allowed;
   }
 
+  .container {
+  padding: 20px;
+  max-width: 500px;
+  margin: auto;
+}
+
+textarea, input, button {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
   @media screen and (max-width: 480px) {
     input[type="text"], #escanearBtn {
       max-width: 100%;
@@ -136,6 +154,13 @@
     .acciones button {
       flex: 1 1 100%;
     }
+    h2 {
+    font-size: 20px;
+  }
+
+  button {
+    font-size: 14px;
+  }
   }
 </style>
 
@@ -159,7 +184,8 @@
     <button id="imprimirBtn" disabled>🖨️ Imprimir</button>
   </div>
 
-  
+  <button id="logoutBtn">Cerrar sesión</button>
+
 
   <script type="importmap">
 {
@@ -343,6 +369,13 @@ html5QrCode.start(
   escaneoActivo = false;
 }
 
+import { signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  signOut(auth).then(() => {
+    window.location.href = "login.html";
+  });
+});
 
 
 </script>
